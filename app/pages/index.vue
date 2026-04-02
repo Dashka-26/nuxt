@@ -1,76 +1,119 @@
 <template>
-  <div>
-    <UPageHero
-      title="Nuxt Starter Template"
-      description="A production-ready starter template powered by Nuxt UI. Build beautiful, accessible, and performant applications in minutes, not hours."
-      :links="[{
-        label: 'Get started',
-        to: 'https://ui.nuxt.com/docs/getting-started/installation/nuxt',
-        target: '_blank',
-        trailingIcon: 'i-lucide-arrow-right',
-        size: 'xl'
-      }, {
-        label: 'Use this template',
-        to: 'https://github.com/nuxt-ui-templates/starter',
-        target: '_blank',
-        icon: 'i-simple-icons-github',
-        size: 'xl',
-        color: 'neutral',
-        variant: 'subtle'
-      }]"
-    />
+  <div class="bg-gray-50 min-h-screen p-8">
+    <div class="max-w-6xl mx-auto flex flex-col items-center">
+      <div class="w-full flex justify-between items-center mb-10">
+        <h1 class="text-3xl font-bold text-gray-800">
+          Start Your 3 Day Free Trial
+        </h1>
+        <div class="flex items-center gap-2 text-sm">
+          <span class="text-green-500 font-medium">
+            Save up to 20%
+          </span>
+          <div class="flex border border-gray-200 rounded-md overflow-hidden bg-white">
+            <button class="px-4 py-1.5 font-medium border-r border-gray-200">
+              Annual
+            </button>
+            <button class="px-4 py-1.5 text-gray-500 bg-gray-50">
+              Monthly
+            </button>
+          </div>
+        </div>
+      </div>
 
-    <UPageSection
-      id="features"
-      title="Everything you need to build modern Nuxt apps"
-      description="Start with a solid foundation. This template includes all the essentials for building production-ready applications with Nuxt UI's powerful component system."
-      :features="[{
-        icon: 'i-lucide-rocket',
-        title: 'Production-ready from day one',
-        description: 'Pre-configured with TypeScript, ESLint, Tailwind CSS, and all the best practices. Focus on building features, not setting up tooling.'
-      }, {
-        icon: 'i-lucide-palette',
-        title: 'Beautiful by default',
-        description: 'Leveraging Nuxt UI\'s design system with automatic dark mode, consistent spacing, and polished components that look great out of the box.'
-      }, {
-        icon: 'i-lucide-zap',
-        title: 'Lightning fast',
-        description: 'Optimized for performance with SSR/SSG support, automatic code splitting, and edge-ready deployment. Your users will love the speed.'
-      }, {
-        icon: 'i-lucide-blocks',
-        title: '100+ components included',
-        description: 'Access Nuxt UI\'s comprehensive component library. From forms to navigation, everything is accessible, responsive, and customizable.'
-      }, {
-        icon: 'i-lucide-code-2',
-        title: 'Developer experience first',
-        description: 'Auto-imports, hot module replacement, and TypeScript support. Write less boilerplate and ship more features.'
-      }, {
-        icon: 'i-lucide-shield-check',
-        title: 'Built for scale',
-        description: 'Enterprise-ready architecture with proper error handling, SEO optimization, and security best practices built-in.'
-      }]"
-    />
+      <div class="flex flex-col md:flex-row gap-6 justify-center w-full">
+        <div
+          v-for="plan in plans"
+          :key="plan.id"
+          class="bg-white rounded-xl shadow-sm w-full max-w-[360px] overflow-hidden border border-gray-200 transition-all duration-300 hover:border-black flex flex-col"
+        >
+          <div class="h-1.5 w-full bg-gradient-to-r from-[#73ff00] to-cyan-400"></div>
 
-    <UPageSection>
-      <UPageCTA
-        title="Ready to build your next Nuxt app?"
-        description="Join thousands of developers building with Nuxt and Nuxt UI. Get this template and start shipping today."
-        variant="subtle"
-        :links="[{
-          label: 'Start building',
-          to: 'https://ui.nuxt.com/docs/getting-started/installation/nuxt',
-          target: '_blank',
-          trailingIcon: 'i-lucide-arrow-right',
-          color: 'neutral'
-        }, {
-          label: 'View on GitHub',
-          to: 'https://github.com/nuxt-ui-templates/starter',
-          target: '_blank',
-          icon: 'i-simple-icons-github',
-          color: 'neutral',
-          variant: 'outline'
-        }]"
-      />
-    </UPageSection>
+          <div class="p-8 flex-grow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">
+              {{ plan.name }}
+            </h2>
+
+            <span class="inline-block bg-gray-100 text-gray-500 text-[11px] font-semibold px-2 py-1 rounded mb-3">
+              {{ plan.trialText }}
+            </span>
+
+            <div class="flex items-baseline mb-1">
+              <span class="text-[2.75rem] font-extrabold text-gray-800 leading-none">
+                ${{ plan.price }}
+              </span>
+              <span class="text-gray-400 font-medium ml-1">
+                /month
+              </span>
+            </div>
+
+            <p class="text-gray-500 text-xs mb-2">
+              billed yearly at
+              <span class="line-through">
+                {{ plan.oldYearly }}
+              </span>
+              <span class="font-semibold text-gray-800 pl-1">
+                {{ plan.newYearly }}
+              </span>
+            </p>
+
+            <span class="inline-block bg-[#e9ffea] text-green-600 text-xs font-bold px-2 py-1 rounded mb-6">
+              {{ plan.savings }}
+            </span>
+
+            <button class="w-full bg-gradient-to-r from-[#ffcf00] to-[#ff9800] text-gray-900 font-bold py-2.5 rounded transition-all hover:opacity-90 mb-6 shadow-sm">
+              Try It Free
+            </button>
+
+            <hr class="border-gray-100 mb-6" />
+
+            <ul class="space-y-3.5">
+              <li
+                v-for="(feature, idx) in plan.features"
+                :key="idx"
+                class="flex items-start gap-3"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-4 h-4 mt-1 flex-shrink-0"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill="#73ff00"
+                    d="M12 1L9 9l-8 3l8 3l3 8l3-8l8-3l-8-3z"
+                  />
+                </svg>
+                <div>
+                  <p class="text-gray-600 text-[13px] leading-tight">
+                    <span
+                      v-if="feature.boldText"
+                      v-html="feature.text.replace(feature.boldText, `<span class='font-bold text-gray-800'>${feature.boldText}</span>`)"
+                    />
+                    <span v-else>
+                      {{ feature.text }}
+                    </span>
+                  </p>
+                  <p
+                    v-if="feature.subtext"
+                    class="text-gray-400 text-xs mt-0.5"
+                  >
+                    {{ feature.subtext }}
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
+
+<script setup>
+import { useHead, useFetch } from '#imports'
+
+useHead({
+  title: 'Список продуктів'
+})
+
+const { data: plans } = await useFetch('/api/plans')
+</script>

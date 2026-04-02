@@ -33,6 +33,11 @@ useSeoMeta({
           <AppLogo class="w-auto h-6 shrink-0" />
         </NuxtLink>
 
+        <nav class="flex items-center gap-4 ml-6">
+          <NuxtLink to="/" class="text-sm font-medium hover:text-primary transition-colors">Список продуктів</NuxtLink>
+          <NuxtLink to="/products-table" class="text-sm font-medium hover:text-primary transition-colors">Таблиця</NuxtLink>
+        </nav>
+
         <TemplateMenu />
       </template>
 
