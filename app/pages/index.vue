@@ -60,9 +60,12 @@
               {{ plan.savings }}
             </span>
 
-            <button class="w-full bg-gradient-to-r from-[#ffcf00] to-[#ff9800] text-gray-900 font-bold py-2.5 rounded transition-all hover:opacity-90 mb-6 shadow-sm">
+            <NuxtLink
+              :to="`/checkout?plan=${plan.id}`"
+              class="w-full block text-center bg-gradient-to-r from-[#ffcf00] to-[#ff9800] text-gray-900 font-bold py-2.5 rounded transition-all hover:opacity-90 mb-6 shadow-sm"
+            >
               Try It Free
-            </button>
+            </NuxtLink>
 
             <hr class="border-gray-100 mb-6" />
 
