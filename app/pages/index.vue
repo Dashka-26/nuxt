@@ -26,7 +26,7 @@
           :key="plan.id"
           class="bg-white rounded-xl shadow-sm w-full max-w-[360px] overflow-hidden border border-gray-200 transition-all duration-300 hover:border-black flex flex-col"
         >
-          <div class="h-1.5 w-full bg-gradient-to-r from-[#73ff00] to-cyan-400"></div>
+          <div :class="`h-1.5 w-full bg-gradient-to-r ${plan.color}`" />
 
           <div class="p-8 flex-grow">
             <h2 class="text-xl font-bold text-gray-800 mb-4">
@@ -51,7 +51,7 @@
               <span class="line-through">
                 {{ plan.oldYearly }}
               </span>
-              <span class="font-semibold text-gray-800 pl-1">
+              <span class="font-semibold text-gray-800">
                 {{ plan.newYearly }}
               </span>
             </p>
@@ -60,12 +60,12 @@
               {{ plan.savings }}
             </span>
 
-            <NuxtLink
-              :to="`/checkout?plan=${plan.id}`"
+            <button
               class="w-full block text-center bg-gradient-to-r from-[#ffcf00] to-[#ff9800] text-gray-900 font-bold py-2.5 rounded transition-all hover:opacity-90 mb-6 shadow-sm"
+              @click="handleSelectPlan(plan)"
             >
               Try It Free
-            </NuxtLink>
+            </button>
 
             <hr class="border-gray-100 mb-6" />
 
@@ -112,11 +112,17 @@
 </template>
 
 <script setup>
-import { useHead, useFetch } from '#imports'
+import { useHead, useFetch, navigateTo } from '#imports'
+import { useSubscriptionStore } from '~/stores/useSubscriptionStore'
 
 useHead({
   title: 'Список продуктів'
 })
 
 const { data: plans } = await useFetch('/api/plans')
+const subscriptionStore = useSubscriptionStore()
+const handleSelectPlan = (plan) => {
+  subscriptionStore.setPlan(plan)
+  navigateTo('/checkout')
+}
 </script>

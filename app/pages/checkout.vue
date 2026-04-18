@@ -6,7 +6,10 @@
       </h1>
     </div>
 
-    <div class="max-w-5xl mx-auto px-8 pt-8">
+    <div
+      v-if="selectedPlan"
+      class="max-w-5xl mx-auto px-8 pt-8"
+    >
       <NuxtLink
         to="/"
         class="text-gray-500 hover:text-gray-800 transition-colors text-sm font-medium mb-6 inline-block"
@@ -25,20 +28,20 @@
 
       <div class="grid grid-cols-1 md:grid-cols-[340px_1fr] gap-10 items-start">
         <div class="bg-white rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] w-full overflow-hidden border border-gray-100 flex flex-col">
-          <div :class="`h-1.5 w-full bg-gradient-to-r ${data?.plan.color}`" />
+          <div :class="`h-1.5 w-full bg-gradient-to-r ${selectedPlan.color}`" />
 
           <div class="p-8 flex-grow">
             <h3 class="text-xl font-bold text-gray-800 mb-4">
-              {{ data?.plan.name }}
+              {{ selectedPlan.name }}
             </h3>
 
             <span class="inline-block bg-gray-100 text-gray-500 text-[11px] font-semibold px-2 py-1 rounded mb-3">
-              {{ data?.plan.trialText }}
+              {{ selectedPlan.trialText }}
             </span>
 
             <div class="flex items-baseline mb-1">
               <span class="text-[2.75rem] font-extrabold text-gray-800 leading-none">
-                ${{ data?.plan.price }}
+                ${{ selectedPlan.price }}
               </span>
               <span class="text-gray-400 font-medium ml-1">
                 /month
@@ -48,20 +51,20 @@
             <p class="text-gray-500 text-xs mb-2">
               billed yearly at
               <span class="line-through">
-                {{ data?.plan.oldYearly }}
+                {{ selectedPlan.oldYearly }}
               </span>
               <span class="font-semibold text-gray-800">
-                {{ data?.plan.newYearly }}
+                {{ selectedPlan.newYearly }}
               </span>
             </p>
 
             <span class="inline-block bg-[#e9ffea] text-green-600 text-xs font-bold px-2 py-1 rounded mb-6">
-              {{ data?.plan.savings }}
+              {{ selectedPlan.savings }}
             </span>
 
             <ul class="space-y-3.5">
               <li
-                v-for="(feature, idx) in data?.plan.features"
+                v-for="(feature, idx) in selectedPlan.features"
                 :key="idx"
                 class="flex items-start gap-3"
               >
@@ -72,7 +75,7 @@
                 >
                   <path
                     fill="#73ff00"
-                    d="M12 1L9 9l-8 3l8 3l3 8l3-8l8-3l-8-3z"
+                    d="M12 1L9 9l-8 3l8 3l3 8l3-8l8-3l-8-3-8-3z"
                   />
                 </svg>
                 <div>
@@ -110,11 +113,11 @@
               Annual Plan
             </span>
             <span>
-              ${{ data?.summary.annualPlan }}
+              ${{ annualTotal }}
             </span>
           </div>
 
-          <div class="flex justify-between items-center text-sm text-gray-600 mb-4 pt-4 border-t border-gray-300">
+          <div class="flex justify-between items-center text-sm text-gray-600 mb-4 pb-4 border-b border-gray-100">
             <span>
               Total Due
               <span class="text-[11px] text-gray-400">
@@ -122,7 +125,7 @@
               </span>
             </span>
             <span>
-              ${{ data?.summary.totalDue }}
+              ${{ annualTotal }}
             </span>
           </div>
 
@@ -131,7 +134,7 @@
               Due Today
             </span>
             <span>
-              ${{ data?.summary.dueToday }}
+              $0.00
             </span>
           </div>
 
@@ -249,7 +252,7 @@
               >
                 Terms of Use
               </a>
-              and understand my 3-day free trial will automatically convert to ${{ data?.summary.totalDue }} per year starting on 04/02/2026. The yearly fee will be automatically charged each year going forward unless I cancel my account at least one (1) business day before the end of the current billing period, which can be done by calling (888) 463-3163.
+              and understand my 3-day free trial will automatically convert to ${{ annualTotal }} per year starting on 04/02/2026. The yearly fee will be automatically charged each year going forward unless I cancel my account at least one (1) business day before the end of the current billing period, which can be done by calling (888) 463-3163.
             </p>
           </div>
 
@@ -276,17 +279,19 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRoute, useHead, useFetch } from '#imports'
+import { useHead, navigateTo } from '#imports'
+import { storeToRefs } from 'pinia'
+import { useSubscriptionStore } from '~/stores/useSubscriptionStore'
 
 useHead({
   title: 'Оплата підписки'
 })
 
-const route = useRoute()
-
-const { data } = await useFetch('/api/checkout', {
-  query: { plan: route.query.plan || 2 }
-})
+const subscriptionStore = useSubscriptionStore()
+const { selectedPlan, annualTotal } = storeToRefs(subscriptionStore)
+if (!selectedPlan.value) {
+  navigateTo('/')
+}
 
 const isLoading = ref(false)
 const successMessage = ref('')
@@ -296,7 +301,7 @@ const form = ref({
   cardNumber: '',
   expiry: '',
   cvc: '',
-  fullName: '',
+  fullName: 'dev4 dev4',
   address: ''
 })
 
@@ -309,7 +314,10 @@ const submitCheckout = async () => {
   try {
     const response = await $fetch('/api/subscription/create', {
       method: 'POST',
-      body: form.value
+      body: {
+        ...form.value,
+        plan: selectedPlan.value.name
+      }
     })
 
     if (response.success) {
