@@ -20,7 +20,7 @@
       >
         <template #title-cell="{ row }">
           <ULink
-            :to="'/admin/blog/posts/' + (row.original as unknown as Post).id + '/edit'"
+            :to="'/posts/' + (row.original as unknown as Post).id"
             class="text-primary-500 hover:underline"
           >
             {{ (row.original as unknown as Post).title }}
