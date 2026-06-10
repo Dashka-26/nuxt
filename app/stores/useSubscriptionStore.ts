@@ -9,7 +9,6 @@ export const useSubscriptionStore = defineStore('subscription', () => {
     return Number(num).toFixed(2)
   })
 
-  // Actions: Збереження та очищення плану
   function setPlan(plan: any) {
     selectedPlan.value = plan
   }
