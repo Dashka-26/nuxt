@@ -2,10 +2,10 @@
   <div class="container mx-auto p-6">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-2xl font-bold">
-        Керування статтями (Nuxt UI v3)
+        Керування статтями
       </h1>
       <UButton
-        to="/admin/blog/posts/create"
+        to="/posts/create"
         color="primary"
       >
         Додати статтю
@@ -20,17 +20,25 @@
       >
         <template #title-cell="{ row }">
           <ULink
-            :to="'/posts/' + (row.original as unknown as Post).id"
+            :to="'/posts/' + row.original.id"
             class="text-primary-500 hover:underline"
           >
-            {{ (row.original as unknown as Post).title }}
+            {{ row.original.title }}
           </ULink>
         </template>
+
         <template #user-cell="{ row }">
-          {{ (row.original as unknown as Post).user?.name || 'Невідомо' }}
+          {{ row.original.author_name || 'Невідомо' }}
         </template>
+
         <template #category-cell="{ row }">
-          {{ (row.original as unknown as Post).category?.title || 'Без категорії' }}
+          {{ row.original.category_title || 'Без категорії' }}
+        </template>
+
+        <template #actions-cell="{ row }">
+          <UDropdownMenu :items="getActionItems(row.original)">
+            <UButton color="neutral" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+          </UDropdownMenu>
         </template>
       </UTable>
 
@@ -51,14 +59,17 @@ import { ref, watch } from 'vue'
 interface Post {
   id: number
   title: string
-  published_at: string | null
-  category: { title: string } | null
-  user: { name: string } | null
+  date_published: string | null
+  category_title: string | null
+  author_name: string | null
 }
 
 interface ApiResponse {
   data: Post[]
   total: number
+  meta?: {
+    total: number
+  }
 }
 
 const page = ref(1)
@@ -73,7 +84,30 @@ const columns: any[] = [
   { accessorKey: 'user', header: 'Автор' },
   { accessorKey: 'category', header: 'Категорія' },
   { accessorKey: 'title', header: 'Заголовок' },
-  { accessorKey: 'published_at', header: 'Дата публікації' }
+  { accessorKey: 'date_published', header: 'Дата публікації' },
+  { id: 'actions', header: 'Дії' }
+]
+
+const getActionItems = (row: Post) => [
+  [
+    {
+      label: 'Переглянути',
+      icon: 'i-heroicons-eye-20-solid',
+      to: `/posts/${row.id}`
+    },
+    {
+      label: 'Редагувати',
+      icon: 'i-heroicons-pencil-square-20-solid',
+      to: `/posts/${row.id}/edit`
+    }
+  ],
+  [
+    {
+      label: 'Видалити',
+      icon: 'i-heroicons-trash-20-solid',
+      onSelect: () => deletePost(row.id)
+    }
+  ]
 ]
 
 const fetchPosts = async () => {
@@ -81,11 +115,21 @@ const fetchPosts = async () => {
   try {
     const response = await $fetch<ApiResponse>(`http://localhost/api/admin/blog/posts?page=${page.value}`)
     posts.value = response.data
-    totalPosts.value = response.total
+    totalPosts.value = response.meta?.total || response.total || 0
   } catch (error) {
-    console.error('Помилка API:', error)
+    console.error(error)
   } finally {
     pending.value = false
+  }
+}
+
+const deletePost = async (id: number) => {
+  if (!confirm('Ви дійсно хочете видалити цю статтю?')) return
+  try {
+    await $fetch(`http://localhost/api/admin/blog/posts/${id}`, { method: 'DELETE' })
+    fetchPosts()
+  } catch (error) {
+    console.error(error)
   }
 }
 
