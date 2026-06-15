@@ -36,6 +36,9 @@ useSeoMeta({
         <nav class="flex items-center gap-4 ml-6">
           <NuxtLink to="/" class="text-sm font-medium hover:text-primary transition-colors">Список продуктів</NuxtLink>
           <NuxtLink to="/products-table" class="text-sm font-medium hover:text-primary transition-colors">Таблиця</NuxtLink>
+
+          <NuxtLink to="/BlogPostsUi" class="text-sm font-medium hover:text-primary transition-colors" active-class="text-primary font-bold">Статті</NuxtLink>
+          <NuxtLink to="/categories" class="text-sm font-medium hover:text-primary transition-colors" active-class="text-primary font-bold">Категорії</NuxtLink>
         </nav>
 
         <TemplateMenu />
